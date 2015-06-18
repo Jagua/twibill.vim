@@ -7,6 +7,7 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+let s:system = function(get(g:, 'twibill#system_function', 'system'))
 
 function! twibill#http#get(url, ...)
   let getdata = a:0 > 0 ? a:000[0] : {}
@@ -27,7 +28,7 @@ function! twibill#http#get(url, ...)
   endfor
   let command .= " ".quote.url.quote
   "echomsg command
-  let res = system(command)
+  let res = s:system(command)
   if res == ''
     return {
     \ 'header'  : '',
@@ -108,7 +109,7 @@ function! twibill#http#post(ctx, url, query, headdata)
     return { "header"  : "", "content" : "{'isAsync' : 1}" }
   endif
   " sync post
-  let res = system(command . " --data-binary @" . quote.file.quote) | call delete(file)
+  let res = s:system(command . " --data-binary @" . quote.file.quote) | call delete(file)
   if get(g:, 'twibill_debug', 0)
     echo a:query
     echomsg command
